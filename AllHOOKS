@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext, useReducer, useRef, useMemo, useCallback, createContext } from 'react';
 
-// Context create kiya theme ke liye
+// Context creation for theme
 const ThemeContext = createContext();
 
 // Reducer function for form inputs
@@ -16,19 +16,19 @@ const formReducer = (state, action) => {
 };
 
 function App() {
-  // useState - counter ke liye
+  // useState - for counter
   const [counter, setCounter] = useState(0);
 
-  // useReducer - form manage karne ke liye
+  // useReducer - to manage form
   const [formState, dispatch] = useReducer(formReducer, { name: '', age: '' });
 
-  // useRef - input field ko focus dene ke liye
+  // useRef - to focus on input field
   const nameInputRef = useRef(null);
 
-  // useContext - theme ke liye
+  // useContext - theme
   const theme = useContext(ThemeContext);
 
-  // useEffect - page load pe counter increment karne ke liye
+  // useEffect - on page load, for counter increment
   useEffect(() => {
     const timer = setTimeout(() => {
       setCounter((prevCounter) => prevCounter + 1);
@@ -36,7 +36,7 @@ function App() {
     return () => clearTimeout(timer); // clean up
   }, [counter]);
 
-  // useMemo - retirement age calculate karne ke liye
+  // useMemo - to calculate retirement age
   const retirementAge = useMemo(() => {
     console.log("Calculating retirement age...");
     return formState.age ? 60 - formState.age : 0;
