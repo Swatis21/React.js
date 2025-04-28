@@ -1,0 +1,94 @@
+import React, { useState, useEffect, useContext, useReducer, useRef, useMemo, useCallback, createContext } from 'react';
+
+// Context create kiya theme ke liye
+const ThemeContext = createContext();
+
+// Reducer function for form inputs
+const formReducer = (state, action) => {
+  switch (action.type) {
+    case 'UPDATE_NAME':
+      return { ...state, name: action.payload };
+    case 'UPDATE_AGE':
+      return { ...state, age: action.payload };
+    default:
+      return state;
+  }
+};
+
+function App() {
+  // useState - counter ke liye
+  const [counter, setCounter] = useState(0);
+
+  // useReducer - form manage karne ke liye
+  const [formState, dispatch] = useReducer(formReducer, { name: '', age: '' });
+
+  // useRef - input field ko focus dene ke liye
+  const nameInputRef = useRef(null);
+
+  // useContext - theme ke liye
+  const theme = useContext(ThemeContext);
+
+  // useEffect - page load pe counter increment karne ke liye
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setCounter((prevCounter) => prevCounter + 1);
+    }, 1000);
+    return () => clearTimeout(timer); // clean up
+  }, [counter]);
+
+  // useMemo - retirement age calculate karne ke liye
+  const retirementAge = useMemo(() => {
+    console.log("Calculating retirement age...");
+    return formState.age ? 60 - formState.age : 0;
+  }, [formState.age]);
+
+  // useCallback - form submit function
+  const handleSubmit = useCallback((e) => {
+    e.preventDefault();
+    alert(`Hello ${formState.name}, you have ${retirementAge} years until retirement!`);
+  }, [formState.name, retirementAge]);
+
+  return (
+    <div style={{ background: theme.background, color: theme.color, padding: '20px' }}>
+      <h1>React Hooks Mini Project 🚀</h1>
+
+      <h2>Counter: {counter}</h2>
+
+      <form onSubmit={handleSubmit}>
+        <input
+          ref={nameInputRef}
+          type="text"
+          placeholder="Enter Name"
+          value={formState.name}
+          onChange={(e) => dispatch({ type: 'UPDATE_NAME', payload: e.target.value })}
+        />
+        <br /><br />
+        <input
+          type="number"
+          placeholder="Enter Age"
+          value={formState.age}
+          onChange={(e) => dispatch({ type: 'UPDATE_AGE', payload: Number(e.target.value) })}
+        />
+        <br /><br />
+        <button type="submit">Submit</button>
+      </form>
+
+      <h3>Retirement in: {retirementAge} years</h3>
+
+      <button onClick={() => nameInputRef.current.focus()}>Focus Name Input</button>
+    </div>
+  );
+}
+
+export default function Wrapper() {
+  const theme = {
+    background: '#f0f0f0',
+    color: '#333'
+  };
+
+  return (
+    <ThemeContext.Provider value={theme}>
+      <App />
+    </ThemeContext.Provider>
+  );
+}
